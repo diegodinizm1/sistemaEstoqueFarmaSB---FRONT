@@ -1,0 +1,91 @@
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+// Importando o nosso tema customizado (com cores e traduções)
+import { appTheme } from './theme';
+
+// Importando provedor de localização para componentes de data (DatePicker, etc)
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/pt-br'; // Importa a linguagem pt-br para a biblioteca de datas
+import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
+
+// Importando nossos componentes de página e layout
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import ItensPage from './pages/ItensPage';
+import SetoresPage from './pages/SetoresPage';
+import MovimentacoesPage from './pages/MovimentacoesPage';
+import EstoquePage from './pages/EstoquePage'; // Descomente quando criar a página
+import Layout from './components/Layout';
+import ConfiguracoesPage from './pages/ConfiguracoesPage';
+
+// Componente principal da Aplicação
+const App = () => {
+  return (
+    <ThemeProvider theme={appTheme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+        <AuthProvider>
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              success: {
+                duration: 3000,
+                style: { background: '#2e7d32', color: 'white' },
+              },
+              error: {
+                duration: 5000,
+                style: { background: '#d32f2f', color: 'white' },
+              },
+            }}
+          />
+          <CssBaseline />
+          
+          <Router>
+            <Routes>
+              {/* Rota pública de Login */}
+              <Route path="/login" element={<LoginPage />} />
+
+              {/* Rotas Protegidas que usarão nosso Layout Principal */}
+              <Route element={<ProtectedRouteWithLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/itens" element={<ItensPage />} />
+                <Route path="/estoque" element={<EstoquePage />} />
+                <Route path="/setores" element={<SetoresPage />} />
+                <Route path="/movimentacoes" element={<MovimentacoesPage />} />
+                <Route path="/configuracoes" element={<ConfiguracoesPage />} />
+              </Route>
+
+              {/* Redirecionamentos padrão */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </LocalizationProvider>
+    </ThemeProvider>
+  );
+};
+
+// Componente auxiliar para proteger rotas e aplicar o Layout
+const ProtectedRouteWithLayout = () => {
+  // Verifica se o token de autenticação existe no localStorage
+  const isAuthenticated = !!localStorage.getItem('token');
+  
+  // Se não estiver autenticado, redireciona para a página de login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Se estiver autenticado, renderiza o Layout,
+  // e o <Outlet /> será substituído pelo componente da rota filha (DashboardPage, ItensPage, etc.)
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
+};
+
+export default App;

@@ -1,0 +1,29 @@
+/* index.css */
+
+/* Remove margens e paddings padrões dos navegadores */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Garante que a aplicação ocupe 100% da altura da tela */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+/* Melhora a renderização de fontes */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.expired-cell {
+  background-color: #ffebee !important; /* Um vermelho bem claro para destacar */
+}
+
+/* Ou, para um tema de farmácia */
+.valid-cell {
+  background-color: #42f050 !important; /* Um verde claro */
+}
