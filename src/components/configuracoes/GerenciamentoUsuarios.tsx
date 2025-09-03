@@ -10,7 +10,7 @@ import UsuarioFormModal, { type NewUserFormData } from './UsuarioFormModal';
 import ConfirmPasswordModal from './ConfirmPasswordModal';
 import { type FuncionarioListaDTO } from '../../types/interface';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '${VITE_API_BASE_URL}/api';
 
 const GerenciamentoUsuarios = () => {
     const [usuarios, setUsuarios] = useState<FuncionarioListaDTO[]>([]);

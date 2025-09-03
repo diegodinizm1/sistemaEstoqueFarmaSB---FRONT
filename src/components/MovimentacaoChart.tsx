@@ -5,7 +5,7 @@ import {
 import { Box, Paper, Typography, CircularProgress, Alert, useTheme } from '@mui/material';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '${VITE_API_BASE_URL}/api';
 
 // 4. Interface para tipar os dados do gráfico
 interface ChartData {

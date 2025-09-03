@@ -30,7 +30,7 @@ import ConfirmationDialog from '../components/ConfirmationDialog';
 import ItemDetailsModal from '../components/ItemDetailsModal';
 import { type ItemDTO, type MedicamentoDTO, type InsumoDTO, type DashboardStats } from '../types/interface';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '${VITE_API_BASE_URL}/api';
 
 const ItensPage = () => {
     const [allItems, setAllItems] = useState<ItemDTO[]>([]);

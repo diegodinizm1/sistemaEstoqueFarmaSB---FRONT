@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // URL base da sua API
+  baseURL: '${VITE_API_BASE_URL}/api', // URL base da sua API
   headers: {
     Authorization: `Bearer ${localStorage.getItem('token')}` // Token JWT
   }

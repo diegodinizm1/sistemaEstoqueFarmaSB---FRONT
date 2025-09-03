@@ -6,7 +6,7 @@ import { type UsuarioPerfilDTO } from '../types/interface';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '${VITE_API_BASE_URL}/api';
 
 interface PerfilModalProps {
     open: boolean;

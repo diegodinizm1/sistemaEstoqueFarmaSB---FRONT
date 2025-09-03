@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Paper, Typography, Box, useTheme, CircularProgress, Alert, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '${VITE_API_BASE_URL}/api';
 
 interface ConsumoData {
     nomeSetor: string;
