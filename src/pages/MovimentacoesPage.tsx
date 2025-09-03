@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import MovimentacaoDetailsModal from '../components/MovimentacoesDetailsModal';
 import { type MovimentacaoHistoricoDTO } from '../types/interface';
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 const MovimentacoesPage = () => {
     const [movimentacoes, setMovimentacoes] = useState<MovimentacaoHistoricoDTO[]>([]);

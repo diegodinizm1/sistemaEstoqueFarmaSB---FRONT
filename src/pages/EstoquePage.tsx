@@ -9,7 +9,7 @@ import MovimentacaoFormModal from '../components/MovimentacaoFormModal';
 import LotesPorItemModal from '../components/LotesPorItemModal';
 import { type EstoqueSaldoDTO } from '../types/interface';
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 const EstoquePage = () => {
     const [saldos, setSaldos] = useState<EstoqueSaldoDTO[]>([]);

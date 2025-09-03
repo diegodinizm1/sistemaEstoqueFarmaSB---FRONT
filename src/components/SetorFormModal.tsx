@@ -4,7 +4,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, C
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import { type SetorDTO } from '../types/interface'; // Supondo que você adicionará SetorDTO em interface.ts
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 interface SetorFormModalProps {
     open: boolean;

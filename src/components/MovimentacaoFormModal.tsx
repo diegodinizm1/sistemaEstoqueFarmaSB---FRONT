@@ -12,7 +12,7 @@ import dayjs, { Dayjs } from 'dayjs'; // Day.js para manipulação de datas
 import { type ItemDTO } from '../types/interface';
 import { type SetorDTO } from '../types/interface';
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 interface MovimentacaoFormModalProps {
     open: boolean;

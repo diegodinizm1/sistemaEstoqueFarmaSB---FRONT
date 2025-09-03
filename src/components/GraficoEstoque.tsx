@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Paper, Typography, Box, useTheme, CircularProgress, Alert } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 // Interface para os dados do gráfico
 interface GraficoData {

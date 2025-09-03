@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, CircularProgress, Divider, Stack } from '@mui/material';
 import { type MovimentacaoDetalhes, type MovimentacaoHistoricoDTO } from '../types/interface'; // Usamos o DTO do histórico para iniciar
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 // Interface para os dados detalhados que virão da API
 

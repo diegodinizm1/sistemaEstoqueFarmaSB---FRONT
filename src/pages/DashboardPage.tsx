@@ -25,7 +25,7 @@ import MovimentacaoChart from '../components/MovimentacaoChart';
 import GraficoEstoque from '../components/GraficoEstoque';
 import ConsumoSetorChart from '../components/ConsumoSetorChart';
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 const DashboardPage = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);

@@ -11,7 +11,7 @@ import SetorFormModal from '../components/SetorFormModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 import { type SetorDTO } from '../types/interface';
 
-const API_BASE_URL = '${VITE_API_BASE_URL}/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 const SetoresPage = () => {
     const [setores, setSetores] = useState<SetorDTO[]>([]);
