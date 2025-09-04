@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { styled, useTheme, type Theme, type CSSObject } from '@mui/material/styles';
 import MuiAppBar, { type AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -24,6 +24,7 @@ import toast from 'react-hot-toast';
 import { useThemeMode } from '../context/ThemeContext'; // Importe o hook do tema
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Ícone de lua
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
 
 // --- ÍCONES ---
 import MenuIcon from '@mui/icons-material/Menu';
@@ -122,6 +123,41 @@ const Layout = ({ children }: { children: ReactNode }) => {
     const [isSaidaModalOpen, setIsSaidaModalOpen] = useState(false);
     const [isItemModalOpen, setIsItemModalOpen] = useState(false);
 
+    const [fabPosition, setFabPosition] = useState({ x: 0, y: 0 });
+    const [fabDirection, setFabDirection] = useState<'up' | 'down' | 'left' | 'right'>('up');
+    const fabRef = useRef<HTMLDivElement>(null);
+    const appBarRef = useRef<HTMLElement>(null);
+    const [appBarHeight, setAppBarHeight] = useState(0);
+    // 2. Novo estado para guardar o tamanho do botão
+    const [fabSize, setFabSize] = useState({ width: 0, height: 0 });
+    const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+    useLayoutEffect(() => {
+        const updateDimensions = () => {
+            if (appBarRef.current) setAppBarHeight(appBarRef.current.clientHeight);
+            if (fabRef.current) setFabSize({ width: fabRef.current.clientWidth, height: fabRef.current.clientHeight });
+            setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+        };
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+        return () => window.removeEventListener('resize', updateDimensions);
+    }, []);
+
+    // 3. useMemo agora depende do 'windowSize' e recalcula os limites corretamente
+    const draggableBounds = useMemo(() => {
+        if (!fabSize.width || !fabSize.height) return undefined;
+
+        const initialRight = 32;
+        const initialBottom = 32;
+
+        return {
+            top: -(windowSize.height - appBarHeight - fabSize.height - initialBottom),
+            left: -(windowSize.width - fabSize.width - initialRight),
+            right: 0,
+            bottom: 0,
+        };
+    }, [appBarHeight, fabSize, windowSize]);
+
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);
     const handleLogout = () => {
@@ -146,10 +182,34 @@ const Layout = ({ children }: { children: ReactNode }) => {
         { icon: <RemoveCircleOutlineIcon color="warning" />, name: 'Registrar Saída', handler: () => setIsSaidaModalOpen(true) },
     ];
 
+    const handleFabDoubleClick = () => {
+        setFabPosition({ x: 0, y: 0 });
+        setFabDirection('up'); // Reseta a direção para o padrão
+    };
+
+    const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
+        // Atualiza a posição no estado
+        setFabPosition({ x: data.x, y: data.y });
+
+        // Calcula a nova direção
+        // 'data.node' é o elemento DOM do nosso Box arrastável
+        const node = data.node;
+        const screenHeight = window.innerHeight;
+        const finalY = node.offsetTop + data.y;
+
+        // Se o botão estiver na metade de cima da tela, abre para baixo.
+        // Senão, abre para cima.
+        if (finalY < screenHeight / 2) {
+            setFabDirection('down');
+        } else {
+            setFabDirection('up');
+        }
+    };
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open} elevation={0} sx={{ backgroundColor: 'background.paper', color: 'text.primary', borderBottom: '1px solid', borderColor: 'divider' }}>
+            <AppBar ref={appBarRef} position="fixed" open={open} elevation={0} sx={{ backgroundColor: 'background.paper', color: 'text.primary', borderBottom: '1px solid', borderColor: 'divider' }}>
                 <Toolbar>
                     <IconButton color="inherit" onClick={handleDrawerOpen} edge="start" sx={{ marginRight: 5, ...(open && { display: 'none' }) }}>
                         <MenuIcon />
@@ -168,9 +228,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
                         EstoqueFarma
                     </Typography>
                     <Tooltip title={mode === 'dark' ? "Modo Claro" : "Modo Escuro"}>
-                    <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
-                        {mode === 'dark' ? <Brightness7Icon sx={{ color: '#ffee01ff'}}/> : <Brightness4Icon sx={{ color: '#030224ff'}} />}
-                    </IconButton>
+                        <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+                            {mode === 'dark' ? <Brightness7Icon sx={{ color: '#ffee01ff' }} /> : <Brightness4Icon sx={{ color: '#030224ff' }} />}
+                        </IconButton>
                     </Tooltip>
                     <Tooltip title="Meu Perfil">
                         <IconButton color="inherit" onClick={() => setIsPerfilModalOpen(true)}>
@@ -239,15 +299,41 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 {children}
             </Box>
 
-            <SpeedDial
-                ariaLabel="Ações Rápidas"
-                sx={{ position: 'fixed', bottom: 16, right: 16 }}
-                icon={<SpeedDialIcon />}
+            <Draggable
+                nodeRef={fabRef}
+                position={fabPosition}
+                onStop={handleDragStop}
+                bounds={draggableBounds} // 5. Usando os limites calculados
             >
-                {speedDialActions.map((action) => (
-                    <SpeedDialAction key={action.name} icon={action.icon} tooltipTitle={action.name} onClick={action.handler} />
-                ))}
-            </SpeedDial>
+                <Box
+                    ref={fabRef}
+                    onDoubleClick={handleFabDoubleClick}
+                    sx={{
+                        position: 'fixed', // Voltamos a usar 'fixed'
+                        bottom: 32,
+                        right: 32,
+                        zIndex: theme.zIndex.speedDial,
+                        cursor: 'move',
+                        transition: fabPosition.x === 0 && fabPosition.y === 0 ? 'transform 0.3s ease-in-out' : 'none',
+                    }}
+                >
+                    <SpeedDial
+                        ariaLabel="Ações Rápidas"
+                        icon={<SpeedDialIcon />}
+                        direction={fabDirection}
+                    >
+                        {speedDialActions.map((action) => (
+                            <SpeedDialAction
+                                key={action.name}
+                                icon={action.icon}
+                                tooltipTitle={action.name}
+                                onClick={action.handler}
+                                tooltipPlacement={fabDirection === 'down' ? 'right' : 'left'}
+                            />
+                        ))}
+                    </SpeedDial>
+                </Box>
+            </Draggable>
 
             {/* Modais Globais */}
             <PerfilModal open={isPerfilModalOpen} onClose={() => setIsPerfilModalOpen(false)} />
