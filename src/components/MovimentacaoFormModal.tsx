@@ -3,14 +3,16 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button,
-    CircularProgress, Alert, Box, Typography, Autocomplete, Stack
+    CircularProgress, Box, Typography, Autocomplete, Stack
 } from '@mui/material';
 // NOVO: Importando o DatePicker
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs'; // Day.js para manipulação de datas
+import toast from 'react-hot-toast'; // Importando o toast
 
 import { type ItemDTO } from '../types/interface';
 import { type SetorDTO } from '../types/interface';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -19,10 +21,11 @@ interface MovimentacaoFormModalProps {
     onClose: () => void;
     onMovimentacaoSaved: () => void;
     initialType: 'ENTRADA' | 'SAIDA';
+    itemToRegister?: ItemDTO | null;
 }
 
-const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType }: MovimentacaoFormModalProps) => {
-    // Estados do formulário
+const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType, itemToRegister}: MovimentacaoFormModalProps) => {
+    const navigate = useNavigate();
     const [selectedItem, setSelectedItem] = useState<ItemDTO | null>(null);
     const [selectedSetor, setSelectedSetor] = useState<SetorDTO | null>(null);
     const [quantidade, setQuantidade] = useState<number | ''>('');
@@ -34,24 +37,27 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
     // Estados para carregar dados
     const [itemList, setItemList] = useState<ItemDTO[]>([]);
     const [setorList, setSetorList] = useState<SetorDTO[]>([]);
-    
+
     // Estados de controle da UI
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+
 
     useEffect(() => {
         if (open) {
+            if(itemToRegister) {
+                setSelectedItem(itemToRegister);
+            }
             const fetchDropdownData = async () => {
                 const token = localStorage.getItem('token');
                 try {
                     const [itemsRes, setoresRes] = await Promise.all([
-                        axios.get<ItemDTO[]>(`${API_BASE_URL}/itens`, { headers: { Authorization: `Bearer ${token}` } }),
+                        axios.get<ItemDTO[]>(`${API_BASE_URL}/itens/com-estoque`, { headers: { Authorization: `Bearer ${token}` } }),
                         axios.get<SetorDTO[]>(`${API_BASE_URL}/setores`, { headers: { Authorization: `Bearer ${token}` } })
                     ]);
                     setItemList(itemsRes.data || []);
                     setSetorList(setoresRes.data || []);
                 } catch (err) {
-                    setError('Falha ao carregar dados de itens ou setores.');
+                    toast.error('Falha ao carregar dados de itens ou setores.');
                     console.error(err);
                 }
             };
@@ -64,15 +70,13 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
             setObservacao('');
             setNumeroLote('');
             setDataValidade(null);
-            setError(null);
         }
-    }, [open]);
+    }, [open, itemToRegister]);
 
     const handleSubmit = async () => {
         setIsLoading(true);
-        setError(null);
         const token = localStorage.getItem('token');
-        
+
         // Define o endpoint e o payload com base no tipo de movimentação
         let endpoint = '';
         let payload: any = {};
@@ -100,18 +104,52 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
             await axios.post(`${API_BASE_URL}${endpoint}`, payload, { headers: { Authorization: `Bearer ${token}` } });
             onMovimentacaoSaved();
             onClose();
+            renderSuccessToastWithAction();
         } catch (err: any) {
             const errorMessage = err.response?.data || 'Falha ao registrar a movimentação.';
-            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
     };
 
+    const renderSuccessToastWithAction  = () => {
+        toast.success(
+            (t) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography variant="body2">
+                        Movimentação registrada com sucesso!
+                    </Typography>
+                    <Button
+                        size="small"
+                        variant="text"
+                        sx={{
+                            color: 'white', 
+                            fontWeight: 'bold',
+                            textDecoration: 'underline', 
+                            textTransform: 'none', 
+                            ml: 2, 
+                        }}
+                        onClick={() => {
+                            toast.dismiss(t.id); 
+                            navigate('/movimentacoes');
+                        }}
+                    >
+                        Ver
+                    </Button>
+                </Box>
+            ),
+            {
+                duration: 6000, // Dê mais tempo para o usuário clicar
+            }
+        );
+    };
+
+
     // Validação ajustada para os novos campos de entrada
-    const isFormInvalid = 
-        !selectedItem || 
-        !quantidade || 
+    const isFormInvalid =
+        !selectedItem ||
+        !quantidade ||
         (initialType === 'SAIDA' && !selectedSetor) ||
         (initialType === 'ENTRADA' && (!numeroLote.trim() || !dataValidade));
 
@@ -124,7 +162,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
             </DialogTitle>
             <Box component="form" onSubmit={(e) => { e.preventDefault(); if (!isFormInvalid) handleSubmit(); }}>
                 <DialogContent dividers>
-                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
                     <Stack spacing={2} sx={{ pt: 1 }}>
                         <Autocomplete
                             options={itemList}
@@ -132,6 +170,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                             value={selectedItem}
                             onChange={(_event, newValue) => setSelectedItem(newValue)}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
+                            disabled={!!itemToRegister}
                             renderInput={(params) => <TextField {...params} label="Item (Medicamento ou Insumo)" required />}
                         />
 
@@ -153,7 +192,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                                 />
                             </>
                         )}
-                        
+
                         {/* Campo que só aparece para SAÍDA */}
                         {initialType === 'SAIDA' && (
                             <Autocomplete

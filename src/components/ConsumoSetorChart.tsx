@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import {memo} from 'react';
 import { Paper, Typography, Box, useTheme, CircularProgress, Alert, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -79,4 +80,4 @@ const ConsumoSetorChart = () => {
     );
 };
 
-export default ConsumoSetorChart;
+export default memo(ConsumoSetorChart);

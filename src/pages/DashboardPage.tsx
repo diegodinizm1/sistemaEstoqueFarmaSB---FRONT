@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Box, Typography, CircularProgress, Paper, Stack, Divider, Chip, Button, Grid } from '@mui/material';
@@ -39,29 +38,32 @@ const DashboardPage = () => {
   const [isSaidaModalOpen, setIsSaidaModalOpen] = useState(false);
   const [isRelatorioModalOpen, setIsRelatorioModalOpen] = useState(false);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const token = localStorage.getItem('token');
-    try {
-      const [statsRes, vencimentoRes, estoqueBaixoRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API_BASE_URL}/dashboard/vencimento`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API_BASE_URL}/dashboard/estoque-baixo`, { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
-      setStats(statsRes.data);
-      setAlertasVencimento(vencimentoRes.data);
-      setAlertasEstoqueBaixo(estoqueBaixoRes.data);
-    } catch (err) {
-      toast.error('Falha ao carregar os dados do dashboard.');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    // A função de busca agora vive aqui dentro
+    const fetchData = async () => {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      try {
+        const [statsRes, vencimentoRes, estoqueBaixoRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${API_BASE_URL}/dashboard/vencimento`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${API_BASE_URL}/dashboard/estoque-baixo`, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+        setStats(statsRes.data);
+        setAlertasVencimento(vencimentoRes.data || []);
+        setAlertasEstoqueBaixo(estoqueBaixoRes.data || []);
+      } catch (err) {
+        toast.error('Falha ao carregar os dados do dashboard.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  useEffect(() => { fetchData(); }, []);
+    fetchData(); // Chama a função
 
-  const handleSave = () => { fetchData(); }; // Recarrega todos os dados do dashboard após uma ação
+  }, []);
+
+  const handleSave = () => { useEffect }; // Recarrega todos os dados do dashboard após uma ação
 
   if (isLoading) return <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>;
 
@@ -82,10 +84,10 @@ const DashboardPage = () => {
 
       {/* --- SEÇÃO DE ESTATÍSTICAS E ALERTAS --- */}
       <Grid container spacing={3}>
-        <Grid size = {{ xs: 12, sm: 6, md:3 }}><KPICard icon={<MedicationIcon />} value={stats?.totalMedicamentos} title="Medicamentos" color="primary.main" /></Grid>
-        <Grid size = {{ xs: 12, sm: 6, md:3 }}><KPICard icon={<VaccinesIcon />} value={stats?.totalInsumos} title="Insumos" color="secondary.main" /></Grid>
-        <Grid size = {{ xs: 12, sm: 6, md:3 }}><KPICard icon={<EventBusyIcon />}value={stats?.lotesProximosVencimento} title="Lotes a Vencer" color="error.main" /></Grid>
-        <Grid size = {{ xs: 12, sm: 6, md:3 }}><KPICard icon={<InventoryIcon />} value={stats?.itensEstoqueBaixo} title="Estoque Baixo" color="warning.main" /></Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}><KPICard icon={<MedicationIcon />} value={stats?.totalMedicamentos} title="Medicamentos" color="primary.main" /></Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}><KPICard icon={<VaccinesIcon />} value={stats?.totalInsumos} title="Insumos" color="secondary.main" /></Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}><KPICard icon={<EventBusyIcon />} value={stats?.lotesProximosVencimento} title="Lotes a Vencer" color="error.main" /></Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}><KPICard icon={<InventoryIcon />} value={stats?.itensEstoqueBaixo} title="Estoque Baixo" color="warning.main" /></Grid>
       </Grid>
 
       <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' } }}>
@@ -105,9 +107,7 @@ const DashboardPage = () => {
           <MovimentacaoChart />
         </Box>
       </Box>
-
-
-      <Box sx={{ width: { xs: '100%', lg: '60%' }, height: 210 }}>
+      <Box sx={{ width: { xs: '100%', lg: '60%' }, height: 460 }}>
         <ConsumoSetorChart />
       </Box>
 

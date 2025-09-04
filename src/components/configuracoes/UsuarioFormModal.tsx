@@ -22,7 +22,6 @@ const UsuarioFormModal = ({ open, onClose, onSave }: UsuarioFormModalProps) => {
     });
     const [confirmarSenha, setConfirmarSenha] = useState('');
 
-    // Limpa o formulário quando o modal fecha
     useEffect(() => {
         if (!open) {
             setFormData({ nome: '', login: '', senha: '' });

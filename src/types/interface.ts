@@ -7,6 +7,7 @@ export interface ItemDTO {
   unidadeMedida: string;
   ativo: boolean;
   dtype: 'MEDICAMENTO' | 'INSUMO'; 
+  possuiEstoque?: boolean;
 }
 
 // Medicamento estende Item e adiciona seus campos específicos

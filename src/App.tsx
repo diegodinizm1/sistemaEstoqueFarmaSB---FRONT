@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 // Importando o nosso tema customizado (com cores e traduções)
-import { appTheme } from './theme';
+import { getAppTheme } from './theme';
 
 // Importando provedor de localização para componentes de data (DatePicker, etc)
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,6 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pt-br'; // Importa a linguagem pt-br para a biblioteca de datas
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
+import { ThemeModeProvider, useThemeMode, } from './context/ThemeContext';
 
 // Importando nossos componentes de página e layout
 import LoginPage from './pages/LoginPage';
@@ -21,14 +22,17 @@ import MovimentacoesPage from './pages/MovimentacoesPage';
 import EstoquePage from './pages/EstoquePage'; // Descomente quando criar a página
 import Layout from './components/Layout';
 import ConfiguracoesPage from './pages/ConfiguracoesPage';
+import { useMemo } from 'react';
 
 // Componente principal da Aplicação
-const App = () => {
+const ThemedApp = () => {
+  const { mode } = useThemeMode(); // Pega o modo atual ('light' ou 'dark')
+  const theme = useMemo(() => createTheme(getAppTheme(mode)), [mode]);
   return (
-    <ThemeProvider theme={appTheme}>
+    <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
         <AuthProvider>
-          <Toaster 
+          <Toaster
             position="top-right"
             toastOptions={{
               success: {
@@ -42,7 +46,7 @@ const App = () => {
             }}
           />
           <CssBaseline />
-          
+
           <Router>
             <Routes>
               {/* Rota pública de Login */}
@@ -73,7 +77,7 @@ const App = () => {
 const ProtectedRouteWithLayout = () => {
   // Verifica se o token de autenticação existe no localStorage
   const isAuthenticated = !!localStorage.getItem('token');
-  
+
   // Se não estiver autenticado, redireciona para a página de login
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -85,6 +89,16 @@ const ProtectedRouteWithLayout = () => {
     <Layout>
       <Outlet />
     </Layout>
+  );
+};
+
+const App = () => {
+  return (
+    <ThemeModeProvider> {/* Envolve com o provider de tema */}
+      <AuthProvider>
+        <ThemedApp />
+      </AuthProvider>
+    </ThemeModeProvider>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { styled, type Theme, type CSSObject } from '@mui/material/styles';
+import { styled, useTheme, type Theme, type CSSObject } from '@mui/material/styles';
 import MuiAppBar, { type AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import {
@@ -16,7 +16,16 @@ import {
     ListItemText,
     Tooltip,
     CssBaseline,
+    SpeedDial,
+    SpeedDialIcon,
+    SpeedDialAction
 } from '@mui/material';
+import toast from 'react-hot-toast';
+import { useThemeMode } from '../context/ThemeContext'; // Importe o hook do tema
+import Brightness4Icon from '@mui/icons-material/Brightness4'; // Ícone de lua
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+
+// --- ÍCONES ---
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -25,9 +34,15 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+
+// --- MODAIS E CONTEXTO ---
 import PerfilModal from './PerfilModal';
+import MovimentacaoFormModal from './MovimentacaoFormModal';
+import ItemFormModal from './AddItemModal';
 
 const drawerWidth = 240;
 
@@ -96,17 +111,25 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const Layout = ({ children }: { children: ReactNode }) => {
+    const { mode, toggleTheme } = useThemeMode();
+    const theme = useTheme(); // Hook do tema que estava faltando
     const navigate = useNavigate();
     const location = useLocation();
     const [open, setOpen] = useState(false);
+
     const [isPerfilModalOpen, setIsPerfilModalOpen] = useState(false);
+    const [isEntradaModalOpen, setIsEntradaModalOpen] = useState(false);
+    const [isSaidaModalOpen, setIsSaidaModalOpen] = useState(false);
+    const [isItemModalOpen, setIsItemModalOpen] = useState(false);
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
+        toast.success('Você saiu da aplicação.');
     };
+    const handleSave = () => { window.location.reload(); };
 
     const menuItems = [
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
@@ -117,17 +140,38 @@ const Layout = ({ children }: { children: ReactNode }) => {
         { text: 'Configurações', icon: <SettingsIcon />, path: '/configuracoes' },
     ];
 
+    const speedDialActions = [
+        { icon: <AddCircleOutlineIcon />, name: 'Adicionar Item', handler: () => setIsItemModalOpen(true) },
+        { icon: <AddCircleOutlineIcon color="success" />, name: 'Registrar Entrada', handler: () => setIsEntradaModalOpen(true) },
+        { icon: <RemoveCircleOutlineIcon color="warning" />, name: 'Registrar Saída', handler: () => setIsSaidaModalOpen(true) },
+    ];
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open} elevation={1}>
+            <AppBar position="fixed" open={open} elevation={0} sx={{ backgroundColor: 'background.paper', color: 'text.primary', borderBottom: '1px solid', borderColor: 'divider' }}>
                 <Toolbar>
                     <IconButton color="inherit" onClick={handleDrawerOpen} edge="start" sx={{ marginRight: 5, ...(open && { display: 'none' }) }}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+                    <Typography
+                        onClick={() => navigate('/dashboard')}
+                        variant="h6"
+                        noWrap
+                        component="div"
+                        sx={{
+                            flexGrow: 1,
+                            fontWeight: 'bold',
+                            cursor: 'pointer' // Adicionado para mostrar que é clicável
+                        }}
+                    >
                         EstoqueFarma
                     </Typography>
+                    <Tooltip title={mode === 'dark' ? "Modo Claro" : "Modo Escuro"}>
+                    <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+                        {mode === 'dark' ? <Brightness7Icon sx={{ color: '#ffee01ff'}}/> : <Brightness4Icon sx={{ color: '#030224ff'}} />}
+                    </IconButton>
+                    </Tooltip>
                     <Tooltip title="Meu Perfil">
                         <IconButton color="inherit" onClick={() => setIsPerfilModalOpen(true)}>
                             <AccountCircleIcon />
@@ -135,42 +179,81 @@ const Layout = ({ children }: { children: ReactNode }) => {
                     </Tooltip>
                 </Toolbar>
             </AppBar>
-            
+
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}><ChevronLeftIcon /></IconButton>
+                    <IconButton onClick={handleDrawerClose}>
+                        <ChevronLeftIcon />
+                    </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
-                    {menuItems.map((item) => (
-                        <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton component={Link} to={item.path} selected={location.pathname.startsWith(item.path)}>
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                <List sx={{ p: 1, flexGrow: 1 }}>
+                    {menuItems.map((item) => {
+                        const isActive = location.pathname.startsWith(item.path);
+                        return (
+                            <Tooltip title={!open ? item.text : ''} placement="right" key={item.text}>
+                                <ListItem disablePadding sx={{ display: 'block' }}>
+                                    <ListItemButton
+                                        component={Link}
+                                        to={item.path}
+                                        selected={isActive}
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 2.5,
+                                            borderRadius: 2,
+                                            mb: 0.5,
+                                            color: isActive ? 'primary.main' : 'text.secondary',
+                                            backgroundColor: isActive ? theme.palette.action.selected : 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: theme.palette.action.hover,
+                                            },
+                                            '& .MuiListItemIcon-root': {
+                                                color: 'inherit',
+                                            }
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                                            {item.icon}
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </ListItem>
+                            </Tooltip>
+                        );
+                    })}
                 </List>
-                <Divider />
-                <List sx={{ marginTop: 'auto' }}>
-                    <ListItem disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton onClick={handleLogout}>
-                            <ListItemIcon><LogoutIcon /></ListItemIcon>
-                            <ListItemText primary="Sair" sx={{ opacity: open ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
+                <Box sx={{ p: 1 }}>
+                    <Divider />
+                    <ListItemButton onClick={handleLogout} sx={{ borderRadius: 2, mt: 1 }}>
+                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', alignItems: 'center' }}>
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Sair" sx={{ opacity: open ? 1 : 0 }} />
+                    </ListItemButton>
+                </Box>
             </Drawer>
 
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3, backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
                 <Toolbar />
                 {children}
             </Box>
 
-            <PerfilModal 
-                open={isPerfilModalOpen} 
-                onClose={() => setIsPerfilModalOpen(false)} 
-            />
+            <SpeedDial
+                ariaLabel="Ações Rápidas"
+                sx={{ position: 'fixed', bottom: 16, right: 16 }}
+                icon={<SpeedDialIcon />}
+            >
+                {speedDialActions.map((action) => (
+                    <SpeedDialAction key={action.name} icon={action.icon} tooltipTitle={action.name} onClick={action.handler} />
+                ))}
+            </SpeedDial>
+
+            {/* Modais Globais */}
+            <PerfilModal open={isPerfilModalOpen} onClose={() => setIsPerfilModalOpen(false)} />
+            <ItemFormModal open={isItemModalOpen} onClose={() => setIsItemModalOpen(false)} onItemSaved={handleSave} itemType="medicamento" itemToEdit={null} />
+            <MovimentacaoFormModal open={isEntradaModalOpen} onClose={() => setIsEntradaModalOpen(false)} onMovimentacaoSaved={handleSave} initialType="ENTRADA" />
+            <MovimentacaoFormModal open={isSaidaModalOpen} onClose={() => setIsSaidaModalOpen(false)} onMovimentacaoSaved={handleSave} initialType="SAIDA" />
         </Box>
     );
 };

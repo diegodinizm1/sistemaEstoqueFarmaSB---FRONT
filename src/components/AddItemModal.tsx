@@ -48,11 +48,10 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
         nome: '',
         descricaoDetalhada: '',
         unidadeMedida: '',
-        estoqueMinimo: 0, // Adicionado o novo campo
+        estoqueMinimo: 0,
         tipo: '',
     });
     const [isLoading, setIsLoading] = useState(false);
-    // O estado 'error' não é mais necessário
 
     useEffect(() => {
         if (open) {
@@ -102,9 +101,6 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
         .then(() => {
             onItemSaved();
             onClose();
-        })
-        .catch(() => {
-            // O erro já é tratado pelo toast
         })
         .finally(() => {
             setIsLoading(false);

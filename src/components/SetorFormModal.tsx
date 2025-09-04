@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, CircularProgress, Alert, Box, Typography } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, CircularProgress, Box, Typography } from '@mui/material';
 import ApartmentIcon from '@mui/icons-material/Apartment';
-import { type SetorDTO } from '../types/interface'; // Supondo que você adicionará SetorDTO em interface.ts
+import { type SetorDTO } from '../types/interface';
+import toast from 'react-hot-toast'; 
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -17,18 +18,15 @@ const SetorFormModal = ({ open, onClose, onSetorSaved, setorToEdit }: SetorFormM
     const isEditMode = setorToEdit !== null;
     const [nome, setNome] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (open) {
             setNome(isEditMode ? setorToEdit.nome : '');
-            setError(null);
         }
     }, [open, isEditMode, setorToEdit]);
 
     const handleSubmit = async () => {
         setIsLoading(true);
-        setError(null);
         const token = localStorage.getItem('token');
         const payload = { nome };
 
@@ -41,7 +39,7 @@ const SetorFormModal = ({ open, onClose, onSetorSaved, setorToEdit }: SetorFormM
             onSetorSaved();
             onClose();
         } catch (err) {
-            setError('Falha ao salvar o setor. Verifique se o nome já existe.');
+            toast.error('Falha ao salvar o setor. Verifique se o nome já existe.');
             console.error(err);
         } finally {
             setIsLoading(false);
@@ -58,7 +56,6 @@ const SetorFormModal = ({ open, onClose, onSetorSaved, setorToEdit }: SetorFormM
             </DialogTitle>
             <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                 <DialogContent>
-                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                     <TextField
                         autoFocus
                         margin="dense"

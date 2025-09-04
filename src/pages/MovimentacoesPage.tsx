@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-    Box, Typography, CircularProgress, Alert, Paper, Stack, Chip,
-    Grid, Button, IconButton
+    Box, Typography, CircularProgress, Alert, Paper, Chip,
+    Grid, Button, IconButton,
+    Stack
 } from '@mui/material';
 import { DataGrid, type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -13,6 +14,9 @@ import dayjs from 'dayjs';
 
 import MovimentacaoDetailsModal from '../components/MovimentacoesDetailsModal';
 import { type MovimentacaoHistoricoDTO } from '../types/interface';
+import toast from 'react-hot-toast';
+import { fadeInUp } from '../utils/animacao';
+import { Global } from '@emotion/react';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -30,6 +34,7 @@ const MovimentacoesPage = () => {
     const handleGeneratePdf = async () => {
         if (!reportDate) {
             alert("Por favor, selecione uma data para o relatório.");
+            toast.error("Data do relatório não selecionada.");
             return;
         }
 
@@ -55,6 +60,7 @@ const MovimentacoesPage = () => {
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
             alert("Não foi possível gerar o relatório.");
+            toast.error("Falha ao gerar o relatório. Tente novamente.");
         }
     };
 
@@ -70,6 +76,7 @@ const MovimentacoesPage = () => {
                 setMovimentacoes(response.data || []);
             } catch (err) {
                 setError('Falha ao carregar o histórico de movimentações.');
+                toast.error('Falha ao carregar o histórico de movimentações.');
                 console.error(err);
             } finally {
                 setIsLoading(false);
@@ -88,15 +95,15 @@ const MovimentacoesPage = () => {
 
     const columns: GridColDef<MovimentacaoHistoricoDTO>[] = [
         {
-            field: 'dataMovimentacao', headerName: 'Data e Hora', flex: 1.2,
-            type: 'dateTime',
+            field: 'dataMovimentacao', headerName: 'Data e Hora', flex: 0.6,
+            type: 'dateTime', align: 'center', headerAlign: 'center',
             valueGetter: (value) => new Date(value),
         },
-        { field: 'nomeItem', headerName: 'Item', flex: 1.5 },
+        { field: 'nomeItem', headerName: 'Item', flex: 1.2, align: 'center', headerAlign: 'center', },
         {
             field: 'tipoMovimentacao',
             headerName: 'Tipo',
-            flex: 1,
+            flex: .55,
             align: 'center',
             headerAlign: 'center',
             renderCell: (params) => (
@@ -119,14 +126,14 @@ const MovimentacoesPage = () => {
         },
         { field: 'quantidade', headerName: 'Qtd.', flex: 0.5, align: 'center', headerAlign: 'center' },
         {
-            field: 'nomeSetor', headerName: 'Setor Destino', flex: 1,
+            field: 'nomeSetor', headerName: 'Setor Destino', flex: .66, align: 'center', headerAlign: 'center',
             valueGetter: (value: string | null) => value || 'N/A'
         },
         {
             field: 'actions',
             headerName: 'Detalhes',
-            width: 80,
-            sortable: false,
+            flex: 0.5,
+            sortable: false, align: 'center',headerAlign: 'center',
             filterable: false,
             renderCell: (params: GridRenderCellParams) => (
                 <Box
@@ -152,6 +159,7 @@ const MovimentacoesPage = () => {
 
     return (
         <Stack spacing={3}>
+            <Global styles={fadeInUp} />
             <Box>
                 <Typography variant="h4" fontWeight="bold">Histórico de Movimentações</Typography>
             </Box>
@@ -163,7 +171,7 @@ const MovimentacoesPage = () => {
                         <DatePicker label="Selecione a Data" value={reportDate} onChange={setReportDate} />
                     </Grid>
                     <Grid>
-                        <Button variant="contained" color="secondary" startIcon={<PictureAsPdfIcon />} onClick={handleGeneratePdf}>
+                        <Button variant="outlined" color="primary" startIcon={<PictureAsPdfIcon />} onClick={handleGeneratePdf}>
                             Gerar PDF
                         </Button>
                     </Grid>
@@ -177,16 +185,29 @@ const MovimentacoesPage = () => {
                             rows={movimentacoes}
                             columns={columns}
                             getRowId={(row) => row.id}
-                            sx={{
-                                '& .MuiDataGrid-columnHeader': {
-                                    backgroundColor: 'white',
-                                    color: 'primary.main',
-                                    fontWeight: 'bold',
-                                },
-                                backgroundColor: 'white',
-                            }}
+                            disableColumnResize 
+                            showColumnVerticalBorder
+                            showToolbar
+                            showCellVerticalBorder
                             initialState={{
                                 sorting: { sortModel: [{ field: 'dataMovimentacao', sort: 'desc' }] },
+                                pagination: { paginationModel: { pageSize: 10, page: 0 } }
+                            }}
+                            sx={{
+                                '& .MuiDataGrid-row': {
+                                    animation: 'fadeInUp 0.5s ease-in-out forwards',
+                                    opacity: 0,
+                                },
+                                '& .MuiDataGrid-row:nth-of-type(1)': { animationDelay: '0.05s' },
+                                '& .MuiDataGrid-row:nth-of-type(2)': { animationDelay: '0.1s' },
+                                '& .MuiDataGrid-row:nth-of-type(3)': { animationDelay: '0.15s' },
+                                '& .MuiDataGrid-row:nth-of-type(4)': { animationDelay: '0.2s' },
+                                '& .MuiDataGrid-row:nth-of-type(5)': { animationDelay: '0.25s' },
+                                '& .MuiDataGrid-row:nth-of-type(6)': { animationDelay: '0.3s' },
+                                '& .MuiDataGrid-row:nth-of-type(7)': { animationDelay: '0.35s' },
+                                '& .MuiDataGrid-row:nth-of-type(8)': { animationDelay: '0.4s' },
+                                '& .MuiDataGrid-row:nth-of-type(9)': { animationDelay: '0.45s' },
+                                '& .MuiDataGrid-row:nth-of-type(10)': { animationDelay: '0.5s' },
                             }}
                         />}
             </Paper>

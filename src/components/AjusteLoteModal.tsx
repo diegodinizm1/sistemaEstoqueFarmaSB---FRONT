@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Alert, Box, Typography, Stack } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, Typography, Stack } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { type EstoqueListaDTO } from '../types/interface';
+import toast from 'react-hot-toast';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -20,21 +21,18 @@ const AjusteLoteModal = ({ open, onClose, onAjusteSaved, loteToEdit }: AjusteLot
     const [dataValidade, setDataValidade] = useState<Dayjs | null>(null);
     const [observacao, setObservacao] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (loteToEdit) {
             setQuantidade(loteToEdit.quantidade);
             setDataValidade(dayjs(loteToEdit.dataValidade));
             setObservacao('');
-            setError(null);
         }
     }, [loteToEdit]);
 
     const handleSubmit = async () => {
         if (!loteToEdit) return;
         setIsLoading(true);
-        setError(null);
         const token = localStorage.getItem('token');
         const payload = {
             novaQuantidade: quantidade,
@@ -44,9 +42,11 @@ const AjusteLoteModal = ({ open, onClose, onAjusteSaved, loteToEdit }: AjusteLot
         try {
             await axios.put(`${API_BASE_URL}/estoque/ajustar/${loteToEdit.id}`, payload, { headers: { Authorization: `Bearer ${token}` } });
             onAjusteSaved();
+            toast.success('Ajuste salvo com sucesso!');
             onClose();
         } catch (err: any) {
-            setError(err.response?.data || "Falha ao salvar o ajuste.");
+            toast.error(err.response?.data || 'Falha ao salvar o ajuste.');
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
@@ -62,7 +62,6 @@ const AjusteLoteModal = ({ open, onClose, onAjusteSaved, loteToEdit }: AjusteLot
             </DialogTitle>
             <Box component="form" onSubmit={(e) => { e.preventDefault(); if (!isFormInvalid) handleSubmit(); }}>
                 <DialogContent dividers>
-                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                     <Stack spacing={2} sx={{ pt: 1 }}>
                         <TextField
                             label="Nova Quantidade"

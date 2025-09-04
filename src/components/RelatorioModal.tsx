@@ -4,6 +4,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import toast from 'react-hot-toast';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -35,7 +36,7 @@ const RelatorioModal = ({ open, onClose }: RelatorioModalProps) => {
             onClose(); // Fecha o modal após gerar o relatório
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
-            alert("Não foi possível gerar o relatório.");
+            toast.error("Falha ao gerar o relatório. Tente novamente.");
         }
     };
 

@@ -9,6 +9,8 @@ import toast from 'react-hot-toast';
 import UsuarioFormModal, { type NewUserFormData } from './UsuarioFormModal';
 import ConfirmPasswordModal from './ConfirmPasswordModal';
 import { type FuncionarioListaDTO } from '../../types/interface';
+import { Global } from '@emotion/react';
+import { fadeInUp } from '../../utils/animacao';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -50,13 +52,13 @@ const GerenciamentoUsuarios = () => {
     // Chamado pelo segundo modal ao confirmar a senha
     const handleConfirmCreateUser = async (adminPassword: string) => {
         if (!newUserFormData) return;
-        
+
         // Usamos um toast.promise para gerenciar todos os estados da requisição
         const promise = axios.post(`${API_BASE_URL}/funcionarios`, {
             ...newUserFormData,
             senhaAdminConfirmacao: adminPassword,
-        }, { 
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
+        }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
 
         toast.promise(promise, {
@@ -64,10 +66,10 @@ const GerenciamentoUsuarios = () => {
             success: 'Usuário criado com sucesso!',
             error: (err: any) => err.response?.data || 'Falha ao criar usuário.',
         })
-        .then(() => {
-            fetchUsuarios();
-            setIsConfirmModalOpen(false);
-        });
+            .then(() => {
+                fetchUsuarios();
+                setIsConfirmModalOpen(false);
+            });
     };
 
     // Coluna de ações foi removida
@@ -82,6 +84,7 @@ const GerenciamentoUsuarios = () => {
 
     return (
         <Stack spacing={2}>
+            <Global styles={fadeInUp} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAddModal}>
                     Adicionar Usuário
@@ -93,11 +96,16 @@ const GerenciamentoUsuarios = () => {
                         rows={usuarios}
                         columns={columns}
                         getRowId={(row) => row.id}
-                        sx={{ border: 0 }}
+                        initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}
+                        sx={{
+                            '& .MuiDataGrid-row': {
+                                animation: 'fadeInUp 0.5s ease-in-out forwards'
+                            }
+                        }}
                     />
                 )}
             </Paper>
-            
+
             <UsuarioFormModal
                 open={isUserFormModalOpen}
                 onClose={() => setIsUserFormModalOpen(false)}
