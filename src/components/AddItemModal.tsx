@@ -24,6 +24,7 @@ import ScienceIcon from '@mui/icons-material/Science';
 import toast from 'react-hot-toast'; // 1. Importando o toast
 
 import { type ItemDTO, type MedicamentoDTO } from '../types/interface';
+import { soundService } from '../services/soundService';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 //const API_BASE_URL = `http://localhost:8080/api`;
@@ -101,7 +102,12 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
         })
         .then(() => {
             onItemSaved();
+            soundService.playSuccess();
             onClose();
+        })
+        .catch((err) => {
+            soundService.playError();
+            console.error(err);
         })
         .finally(() => {
             setIsLoading(false);

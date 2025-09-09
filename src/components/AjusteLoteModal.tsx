@@ -6,6 +6,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { type EstoqueListaDTO } from '../types/interface';
 import toast from 'react-hot-toast';
+import { soundService } from '../services/soundService';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 //const API_BASE_URL = `http://localhost:8080/api`;
@@ -44,9 +45,11 @@ const AjusteLoteModal = ({ open, onClose, onAjusteSaved, loteToEdit }: AjusteLot
             await axios.put(`${API_BASE_URL}/estoque/ajustar/${loteToEdit.id}`, payload, { headers: { Authorization: `Bearer ${token}` } });
             onAjusteSaved();
             toast.success('Ajuste salvo com sucesso!');
+            soundService.playSuccess();
             onClose();
         } catch (err: any) {
             toast.error(err.response?.data || 'Falha ao salvar o ajuste.');
+            soundService.playError();
             console.error(err);
         } finally {
             setIsLoading(false);

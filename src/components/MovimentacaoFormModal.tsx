@@ -70,6 +70,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                     setSetorList(setoresRes.data || []);
                 } catch (err) {
                     toast.error('Falha ao carregar dados de itens ou setores.');
+                    soundService.playError();
                 }
             };
             fetchDropdownData();
@@ -96,6 +97,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
     const handleAdicionarItem = () => {
         if (!itemAtual || !quantidadeAtual || (initialType === 'ENTRADA' && (!loteAtual.trim() || !validadeAtual))) {
             toast.error("Preencha todos os campos do item para adicionar.");
+            soundService.playError();
             return;
         }
 
@@ -160,6 +162,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || err.response?.data || 'Falha ao registrar a movimentação.';
             toast.error(errorMessage);
+            soundService.playError();
         } finally {
             setIsLoading(false);
         }

@@ -5,6 +5,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import toast from 'react-hot-toast';
+import { soundService } from '../services/soundService';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 //const API_BASE_URL = `http://localhost:8080/api`;
@@ -34,9 +35,12 @@ const RelatorioModal = ({ open, onClose }: RelatorioModalProps) => {
             document.body.appendChild(link);
             link.click();
             link.remove();
+            toast.success('Relatório na fila de downloads!')
+            soundService.playSuccess();
             onClose(); // Fecha o modal após gerar o relatório
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
+            soundService.playError();
             toast.error("Falha ao gerar o relatório. Tente novamente.");
         }
     };

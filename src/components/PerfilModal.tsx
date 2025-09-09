@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { type UsuarioPerfilDTO } from '../types/interface';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { soundService } from '../services/soundService';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 //const API_BASE_URL = `http://localhost:8080/api`;
@@ -16,7 +17,7 @@ interface PerfilModalProps {
 
 const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
     const { fetchUser } = useAuth();
-    
+
     const [infoData, setInfoData] = useState({ nome: '', login: '' });
     const [senhaData, setSenhaData] = useState({ senhaAtual: '', novaSenha: '', confirmarNovaSenha: '' });
     const [isLoading, setIsLoading] = useState(true); // Começa como true para a busca inicial
@@ -32,6 +33,7 @@ const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
                 } catch (error) {
                     toast.error("Não foi possível carregar os dados do perfil.");
                     console.error("Erro ao buscar perfil:", error);
+                    soundService.playError();
                     onClose(); // Fecha o modal se houver erro
                 } finally {
                     setIsLoading(false);
@@ -55,22 +57,28 @@ const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
     const handleUpdateInfo = async () => {
         setIsLoading(true);
         const promise = axios.put(`${API_BASE_URL}/usuarios/perfil`, infoData, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
-        
+
         toast.promise(promise, {
             loading: 'Salvando...',
             success: 'Informações atualizadas!',
             error: (err: any) => err.response?.data || 'Falha ao atualizar.',
         })
-        .then(() => {
-            fetchUser();
-            onClose();
-        })
-        .finally(() => setIsLoading(false));
+            .then(() => {
+                fetchUser();
+                soundService.playSuccess();
+                onClose();
+            })
+            .catch((err) => {
+                soundService.playError();
+                console.error(err);
+            })
+            .finally(() => setIsLoading(false));
     };
 
     const handleUpdateSenha = async () => {
         if (senhaData.novaSenha !== senhaData.confirmarNovaSenha) {
             toast.error("A nova senha e a confirmação não coincidem.");
+            soundService.playError();
             return;
         }
         setIsLoading(true);
@@ -81,14 +89,19 @@ const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
             success: 'Senha alterada com sucesso!',
             error: (err: any) => err.response?.data || 'Falha ao alterar a senha.',
         })
-        .then(() => {
-            setSenhaData({ senhaAtual: '', novaSenha: '', confirmarNovaSenha: '' });
-            onClose();
-        })
-        .finally(() => setIsLoading(false));
+            .then(() => {
+                setSenhaData({ senhaAtual: '', novaSenha: '', confirmarNovaSenha: '' });
+                soundService.playSuccess();
+                onClose();
+            })
+            .catch((err) => {
+                soundService.playError();
+                console.error(err);
+            })
+            .finally(() => setIsLoading(false));
     };
 
-     return (
+    return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm"> {/* Mudei para sm para um layout mais compacto */}
             <DialogTitle sx={{ fontWeight: 'bold' }}>Meu Perfil</DialogTitle>
             <DialogContent dividers>
@@ -108,7 +121,7 @@ const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
                                 <Button variant="contained" onClick={handleUpdateInfo}>Salvar Informações</Button>
                             </Stack>
                         </Box>
-                        
+
                         <Divider />
 
                         {/* Seção de Alterar Senha */}
