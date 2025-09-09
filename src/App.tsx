@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -12,6 +12,8 @@ import 'dayjs/locale/pt-br'; // Importa a linguagem pt-br para a biblioteca de d
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import { ThemeModeProvider, useThemeMode, } from './context/ThemeContext';
+import { ptBR } from '@mui/material/locale';
+import { ptBR as dataGridPtBR } from '@mui/x-data-grid/locales';
 
 // Importando nossos componentes de página e layout
 import LoginPage from './pages/LoginPage';
@@ -19,7 +21,7 @@ import DashboardPage from './pages/DashboardPage';
 import ItensPage from './pages/ItensPage';
 import SetoresPage from './pages/SetoresPage';
 import MovimentacoesPage from './pages/MovimentacoesPage';
-import EstoquePage from './pages/EstoquePage'; // Descomente quando criar a página
+import EstoquePage from './pages/EstoquePage';
 import Layout from './components/Layout';
 import ConfiguracoesPage from './pages/ConfiguracoesPage';
 import { useMemo } from 'react';
@@ -27,47 +29,45 @@ import { useMemo } from 'react';
 // Componente principal da Aplicação
 const ThemedApp = () => {
   const { mode } = useThemeMode(); // Pega o modo atual ('light' ou 'dark')
-  const theme = useMemo(() => createTheme(getAppTheme(mode)), [mode]);
+  const theme = useMemo(() => createTheme(getAppTheme(mode), ptBR, dataGridPtBR), [mode]);
   return (
     <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-        <AuthProvider>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              success: {
-                duration: 3000,
-                style: { background: '#2e7d32', color: 'white' },
-              },
-              error: {
-                duration: 5000,
-                style: { background: '#d32f2f', color: 'white' },
-              },
-            }}
-          />
-          <CssBaseline />
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            success: {
+              duration: 3000,
+              style: { background: '#2e7d32', color: 'white' },
+            },
+            error: {
+              duration: 5000,
+              style: { background: '#d32f2f', color: 'white' },
+            },
+          }}
+        />
+        <CssBaseline />
 
-          <Router>
-            <Routes>
-              {/* Rota pública de Login */}
-              <Route path="/login" element={<LoginPage />} />
+        <Router>
+          <Routes>
+            {/* Rota pública de Login */}
+            <Route path="/login" element={<LoginPage />} />
 
-              {/* Rotas Protegidas que usarão nosso Layout Principal */}
-              <Route element={<ProtectedRouteWithLayout />}>
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/itens" element={<ItensPage />} />
-                <Route path="/estoque" element={<EstoquePage />} />
-                <Route path="/setores" element={<SetoresPage />} />
-                <Route path="/movimentacoes" element={<MovimentacoesPage />} />
-                <Route path="/configuracoes" element={<ConfiguracoesPage />} />
-              </Route>
+            {/* Rotas Protegidas que usarão nosso Layout Principal */}
+            <Route element={<ProtectedRouteWithLayout />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/itens" element={<ItensPage />} />
+              <Route path="/estoque" element={<EstoquePage />} />
+              <Route path="/setores" element={<SetoresPage />} />
+              <Route path="/movimentacoes" element={<MovimentacoesPage />} />
+              <Route path="/configuracoes" element={<ConfiguracoesPage />} />
+            </Route>
 
-              {/* Redirecionamentos padrão */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          </Router>
-        </AuthProvider>
+            {/* Redirecionamentos padrão */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Router>
       </LocalizationProvider>
     </ThemeProvider>
   );
@@ -75,12 +75,13 @@ const ThemedApp = () => {
 
 // Componente auxiliar para proteger rotas e aplicar o Layout
 const ProtectedRouteWithLayout = () => {
+  const navigate = useNavigate();
   // Verifica se o token de autenticação existe no localStorage
   const isAuthenticated = !!localStorage.getItem('token');
 
   // Se não estiver autenticado, redireciona para a página de login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    navigate('/login');
   }
 
   // Se estiver autenticado, renderiza o Layout,

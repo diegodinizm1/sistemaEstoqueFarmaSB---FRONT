@@ -4,8 +4,10 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, C
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import { type SetorDTO } from '../types/interface';
 import toast from 'react-hot-toast'; 
+import { soundService } from '../services/soundService';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+const API_BASE_URL = `http://localhost:8080/api`;
 
 interface SetorFormModalProps {
     open: boolean;
@@ -37,9 +39,11 @@ const SetorFormModal = ({ open, onClose, onSetorSaved, setorToEdit }: SetorFormM
                 await axios.post(`${API_BASE_URL}/setores`, payload, { headers: { Authorization: `Bearer ${token}` } });
             }
             onSetorSaved();
+            soundService.playSuccess()
             onClose();
         } catch (err) {
             toast.error('Falha ao salvar o setor. Verifique se o nome já existe.');
+            soundService.playError();
             console.error(err);
         } finally {
             setIsLoading(false);

@@ -14,7 +14,8 @@ import toast from 'react-hot-toast';
 import { Global } from '@emotion/react';
 import { fadeInUp } from '../utils/animacao';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+const API_BASE_URL = `http://localhost:8080/api`;
 
 const SetoresPage = () => {
     const [setores, setSetores] = useState<SetorDTO[]>([]);

@@ -5,7 +5,8 @@ import {
 import { Box, Paper, Typography, CircularProgress, Alert, useTheme } from '@mui/material';
 import axios from 'axios';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+const API_BASE_URL = `http://localhost:8080/api`;
 
 // 4. Interface para tipar os dados do gráfico
 interface ChartData {
@@ -58,14 +59,14 @@ const MovimentacaoChart = () => {
     if (error) return <Alert severity="error">{error}</Alert>;
 
     return (
-        <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+        <Paper elevation={2} sx={{ p: 4, borderRadius: 2 }}>
             <Typography variant="h6" fontWeight="bold" mb={2}>Movimentações por Mês (Último Ano)</Typography>
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data}>
+                <BarChart data={data} margin={{left:20}}>
                     <CartesianGrid strokeDasharray="3 3" />
                     {/* 3. Usando o tickFormatter para exibir o nome do mês */}
                     <XAxis dataKey="mes" tickFormatter={formatarMes} tick={{ fontSize: 12 }} />
-                    <YAxis />
+                    <YAxis/>
                     <Tooltip />
                     <Legend />
                     {/* Usando cores do tema para as barras */}

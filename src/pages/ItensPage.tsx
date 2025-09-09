@@ -40,7 +40,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import MovimentacaoFormModal from '../components/MovimentacaoFormModal';
 import { Global } from '@emotion/react';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+const API_BASE_URL = `http://localhost:8080/api`;
 
 const ItensPage = () => {
     const navigate = useNavigate();
