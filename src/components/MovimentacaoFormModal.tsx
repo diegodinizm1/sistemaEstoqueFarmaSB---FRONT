@@ -63,7 +63,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                 const token = localStorage.getItem('token');
                 try {
                     const [itemsRes, setoresRes] = await Promise.all([
-                        axios.get<ItemDTO[]>(`${API_BASE_URL}/itens`, { headers: { Authorization: `Bearer ${token}` } }),
+                        axios.get<ItemDTO[]>(`${API_BASE_URL}/itens/add-modal`, { headers: { Authorization: `Bearer ${token}` } }),
                         axios.get<SetorDTO[]>(`${API_BASE_URL}/setores`, { headers: { Authorization: `Bearer ${token}` } })
                     ]);
                     setItemList(itemsRes.data || []);
