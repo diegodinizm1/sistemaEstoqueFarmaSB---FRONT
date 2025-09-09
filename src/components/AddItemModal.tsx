@@ -120,7 +120,7 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
             onClose={onClose}
             fullWidth
             maxWidth="sm"
-            slotProps={{ paper: { sx: { borderRadius: theme.shape.borderRadius } } }}
+            slotProps={{ paper: { sx: { borderRadius: 2 } } }}
         >
             <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, borderBottom: `1px solid ${theme.palette.divider}` }}>
                 {itemType === 'medicamento' ? <MedicalInformationIcon color="primary" /> : <ScienceIcon color="secondary" />}
