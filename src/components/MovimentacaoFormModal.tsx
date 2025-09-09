@@ -16,7 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import { type ItemDTO, type SetorDTO } from '../types/interface';
 import { soundService } from '../services/soundService';
 
-const API_BASE_URL = `http://localhost:8080/api`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `http://localhost:8080/api`;
 
 // Interface para o item na lista do formulário
 interface ItemNaLista {

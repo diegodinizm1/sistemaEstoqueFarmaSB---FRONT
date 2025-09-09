@@ -3,8 +3,8 @@ import axios from 'axios';
 import { Box, Typography, Stack, TextField, Button, CircularProgress, Divider } from '@mui/material';
 import toast from 'react-hot-toast';
 
-//const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
-const API_BASE_URL = `http://localhost:8080/api`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `http://localhost:8080/api`;
 
 const ConfiguracaoAlertas = () => {
     const [settings, setSettings] = useState({

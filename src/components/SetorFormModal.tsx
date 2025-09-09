@@ -6,8 +6,8 @@ import { type SetorDTO } from '../types/interface';
 import toast from 'react-hot-toast'; 
 import { soundService } from '../services/soundService';
 
-//const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
-const API_BASE_URL = `http://localhost:8080/api`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+//const API_BASE_URL = `http://localhost:8080/api`;
 
 interface SetorFormModalProps {
     open: boolean;
