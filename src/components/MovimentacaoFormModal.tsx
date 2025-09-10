@@ -19,9 +19,9 @@ import { soundService } from '../services/soundService';
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 //const API_BASE_URL = `http://localhost:8080/api`;
 
-// Interface para o item na lista do formulário
+
 interface ItemNaLista {
-    id: string; // Para controle de chave no React
+    id: string;
     item: ItemDTO;
     quantidade: number;
     numeroLote?: string;
@@ -39,20 +39,16 @@ interface MovimentacaoFormModalProps {
 const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType, itemToRegister }: MovimentacaoFormModalProps) => {
     const navigate = useNavigate();
 
-    // -- ESTADOS GERAIS DA MOVIMENTAÇÃO --
     const [observacao, setObservacao] = useState('');
     const [selectedSetor, setSelectedSetor] = useState<SetorDTO | null>(null); // Apenas para Saída
 
-    // -- ESTADOS PARA A LISTA DE ITENS --
     const [itensNaLista, setItensNaLista] = useState<ItemNaLista[]>([]);
 
-    // -- ESTADOS PARA O "FORMULÁRIO DE ADIÇÃO DE ITEM" --
     const [itemAtual, setItemAtual] = useState<ItemDTO | null>(null);
     const [quantidadeAtual, setQuantidadeAtual] = useState<number | ''>('');
     const [loteAtual, setLoteAtual] = useState('');
     const [validadeAtual, setValidadeAtual] = useState<Dayjs | null>(null);
 
-    // -- ESTADOS DE DADOS E UI --
     const [itemList, setItemList] = useState<ItemDTO[]>([]);
     const [setorList, setSetorList] = useState<SetorDTO[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -75,11 +71,11 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
             };
             fetchDropdownData();
         } else {
-            // Limpa tudo ao fechar
+
             setObservacao('');
             setSelectedSetor(null);
             setItensNaLista([]);
-            // Limpa o formulário de adição
+
             setItemAtual(null);
             setQuantidadeAtual('');
             setLoteAtual('');
@@ -89,7 +85,6 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
 
     useEffect(() => {
         if (open && itemToRegister) {
-            // Pré-preenche o campo do item a ser adicionado
             setItemAtual(itemToRegister);
         }
     }, [open, itemToRegister]);
@@ -102,7 +97,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
         }
 
         const novoItem: ItemNaLista = {
-            id: `${itemAtual.id}-${new Date().getTime()}`, // Chave única simples
+            id: `${itemAtual.id}-${new Date().getTime()}`,
             item: itemAtual,
             quantidade: Number(quantidadeAtual),
             ...(initialType === 'ENTRADA' && {
@@ -113,7 +108,6 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
 
         setItensNaLista(prev => [...prev, novoItem]);
 
-        // Limpa os campos de adição para o próximo item
         setItemAtual(null);
         setQuantidadeAtual('');
         setLoteAtual('');
@@ -141,7 +135,7 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                     dataValidade: i.dataValidade ? i.dataValidade.format('YYYY-MM-DD') : null,
                 }))
             };
-        } else { // SAIDA
+        } else {
             endpoint = '/movimentacoes/saida';
             payload = {
                 observacao,
@@ -215,7 +209,6 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
             </DialogTitle>
             <Box component="form" onSubmit={(e) => { e.preventDefault(); if (!isFormInvalid) handleSubmit(); }}>
                 <DialogContent dividers>
-                    {/* SEÇÃO DE DADOS GERAIS (CABEÇALHO) */}
                     <Stack spacing={2} sx={{ mb: 3 }}>
                         {initialType === 'SAIDA' && (
                             <Autocomplete options={setorList} getOptionLabel={(o) => o.nome} value={selectedSetor} onChange={(_, nv) => setSelectedSetor(nv)} isOptionEqualToValue={(option, value) => option.id === value?.id} renderInput={(params) => <TextField {...params} label="Setor de Destino" required />} />
@@ -223,7 +216,6 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                         <TextField label="Observação Geral (Opcional)" fullWidth multiline rows={2} value={observacao} onChange={(e) => setObservacao(e.target.value)} />
                     </Stack>
                     <Divider />
-                    {/* SEÇÃO DE ADIÇÃO DE ITENS */}
                     <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2, mb: 1 }}>Adicionar Itens à Movimentação</Typography>
                     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} alignItems="flex-start">
                         <Autocomplete options={itemList} getOptionLabel={(o) => o.nome} value={itemAtual} onChange={(_, nv) => setItemAtual(nv)} isOptionEqualToValue={(option, value) => option.id === value?.id} sx={{ flexGrow: 1, minWidth: '200px' }} renderInput={(params) => <TextField {...params} label="Item" />} />
@@ -237,7 +229,6 @@ const MovimentacaoFormModal = ({ open, onClose, onMovimentacaoSaved, initialType
                         <Button variant="outlined" onClick={handleAdicionarItem} disabled={isAddItemDisabled} startIcon={<AddCircleOutlineIcon />} sx={{ height: '56px' }}>Adicionar</Button>
                     </Stack>
 
-                    {/* SEÇÃO DA LISTA DE ITENS ADICIONADOS */}
                     <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 3, mb: 1 }}>Itens na Cesta ({itensNaLista.length})</Typography>
                     <Paper variant="outlined">
                         <List dense>

@@ -20,7 +20,7 @@ const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
 
     const [infoData, setInfoData] = useState({ nome: '', login: '' });
     const [senhaData, setSenhaData] = useState({ senhaAtual: '', novaSenha: '', confirmarNovaSenha: '' });
-    const [isLoading, setIsLoading] = useState(true); // Começa como true para a busca inicial
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (open) {
@@ -34,14 +34,13 @@ const PerfilModal = ({ open, onClose }: PerfilModalProps) => {
                     toast.error("Não foi possível carregar os dados do perfil.");
                     console.error("Erro ao buscar perfil:", error);
                     soundService.playError();
-                    onClose(); // Fecha o modal se houver erro
+                    onClose();
                 } finally {
                     setIsLoading(false);
                 }
             };
             fetchPerfilData();
         } else {
-            // Limpa os formulários ao fechar
             setSenhaData({ senhaAtual: '', novaSenha: '', confirmarNovaSenha: '' });
         }
     }, [open, onClose]);

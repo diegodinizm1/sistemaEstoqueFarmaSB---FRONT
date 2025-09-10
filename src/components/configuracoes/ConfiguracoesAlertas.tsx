@@ -42,9 +42,7 @@ const ConfiguracaoAlertas = () => {
     if (isLoading) return <CircularProgress />;
 
     return (
-        // Usando Stack para organizar as duas seções de configuração
         <Stack spacing={4} sx={{ maxWidth: 400 }}>
-            {/* Seção de Vencimento */}
             <Stack spacing={2}>
                 <Box>
                     <Typography variant="h6">Alertas de Vencimento</Typography>
@@ -63,8 +61,6 @@ const ConfiguracaoAlertas = () => {
             </Stack>
 
             <Divider />
-
-            {/* 2. Nova Seção para Estoque Baixo */}
             <Stack spacing={2}>
                 <Box>
                     <Typography variant="h6">Alerta de Estoque Baixo</Typography>

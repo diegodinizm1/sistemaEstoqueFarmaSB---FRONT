@@ -21,7 +21,6 @@ import { DataGrid, type GridColDef, type GridRenderCellParams } from '@mui/x-dat
 import { toast } from 'react-hot-toast';
 import { fadeInUp } from '../utils/animacao';
 
-// --- ÍCONES E COMPONENTES ---
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -31,7 +30,6 @@ import VaccinesIcon from '@mui/icons-material/Vaccines';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import SearchIcon from '@mui/icons-material/Search';
 
-// --- MODAIS E TIPOS ---
 import ItemFormModal from '../components/AddItemModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 import ItemDetailsModal from '../components/ItemDetailsModal';
@@ -66,7 +64,6 @@ const ItensPage = () => {
     const [isEntradaModalOpen, setIsEntradaModalOpen] = useState(false);
     const [itemParaEntrada, setItemParaEntrada] = useState<ItemDTO | null>(null);
 
-    // Envolvendo a função principal de busca com useCallback
     const fetchPageData = useCallback(async () => {
         setIsLoading(true);
         const token = localStorage.getItem('token');
@@ -87,7 +84,7 @@ const ItensPage = () => {
                 axios.get<{ content: ItemDTO[], totalElements: number }>(`${API_BASE_URL}/itens`, { headers: { Authorization: `Bearer ${token}` }, params }),
                 axios.get<DashboardStats>(`${API_BASE_URL}/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } })
             ]);
-            
+
             setRows(itemsRes.data.content || []);
             setRowCount(itemsRes.data.totalElements || 0);
             setStats(statsRes.data);
@@ -96,13 +93,12 @@ const ItensPage = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [paginationModel, tabValue, termoBusca]); // Dependências corretas
+    }, [paginationModel, tabValue, termoBusca]);
 
     useEffect(() => {
         fetchPageData();
     }, [fetchPageData]);
-    
-    // Envolvendo todos os handlers em useCallback para estabilizá-los
+
     const handleSearch = useCallback(() => {
         setTermoBusca(filtroBusca);
         setPaginationModel(prev => ({ ...prev, page: 0 }));
@@ -118,7 +114,7 @@ const ItensPage = () => {
         setTabValue(newValue);
         setPaginationModel(prev => ({ ...prev, page: 0 }));
     }, []);
-    
+
     const handleItemSaved = useCallback(() => { fetchPageData(); }, [fetchPageData]);
     const handleOpenAddModal = useCallback(() => { setItemToEdit(null); setIsFormModalOpen(true); }, []);
     const handleOpenEditModal = useCallback((item: ItemDTO) => { setItemToEdit(item); setIsFormModalOpen(true); }, []);
@@ -145,16 +141,16 @@ const ItensPage = () => {
             success: 'Item excluído com sucesso!',
             error: 'Falha ao excluir o item.',
         });
-        
+
         fetchPageData();
         setItemToDelete(null);
     };
 
     const columns = useMemo((): GridColDef<ItemDTO>[] => {
         const baseColumns: GridColDef<ItemDTO>[] = [
-            { field: 'nome', headerName: 'Nome', align: 'center',headerAlign: 'center', flex: 1.2 },
-            { field: 'descricaoDetalhada', headerName: 'Descrição', align: 'center',headerAlign: 'center', flex: 2 },
-            { field: 'unidadeMedida', headerName: 'Unidade', align: 'center',headerAlign: 'center', flex: 0.8 },
+            { field: 'nome', headerName: 'Nome', align: 'center', headerAlign: 'center', flex: 1.2 },
+            { field: 'descricaoDetalhada', headerName: 'Descrição', align: 'center', headerAlign: 'center', flex: 2 },
+            { field: 'unidadeMedida', headerName: 'Unidade', align: 'center', headerAlign: 'center', flex: 0.8 },
         ];
 
         const actionsColumn: GridColDef<ItemDTO> = {
@@ -171,16 +167,12 @@ const ItensPage = () => {
 
         if (tabValue === 0) {
             const tipoColumn: GridColDef<ItemDTO> = {
-                field: 'tipo', headerName: 'Tipo', flex: 0.8, align: 'center',headerAlign: 'center',
-                //valueGetter: (params) => {
-                // if (params.row?.dtype === 'MEDICAMENTO') { return (params.row as MedicamentoDTO).tipo; }
-                // return 'N/A';
-                //},
+                field: 'tipo', headerName: 'Tipo', flex: 0.8, align: 'center', headerAlign: 'center',
             };
             return [...baseColumns, tipoColumn, actionsColumn];
         }
         return [...baseColumns, actionsColumn];
-    }, [tabValue, handleStockAction, handleOpenViewModal, handleOpenEditModal]); // A dependência correta é só tabValue, pois as funções não mudam
+    }, [tabValue, handleStockAction, handleOpenViewModal, handleOpenEditModal]);
 
     return (
         <Stack spacing={3}>
@@ -191,7 +183,6 @@ const ItensPage = () => {
             </Box>
 
             <Grid container spacing={3}>
-                {/* Card de Medicamentos */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <Paper elevation={2} sx={{ p: 2, display: 'flex', alignItems: 'center', borderRadius: 2 }}>
                         <MedicationIcon color="primary" sx={{ fontSize: 40, mr: 2 }} />
@@ -206,7 +197,6 @@ const ItensPage = () => {
                     </Paper>
                 </Grid>
 
-                {/* Card de Insumos */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <Paper elevation={2} sx={{ p: 2, display: 'flex', alignItems: 'center', borderRadius: 2 }}>
                         <VaccinesIcon color="secondary" sx={{ fontSize: 40, mr: 2 }} />
@@ -224,7 +214,7 @@ const ItensPage = () => {
 
             <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid size={{xs:12, sm:8}}>
+                    <Grid size={{ xs: 12, sm: 8 }}>
                         <TextField
                             fullWidth
                             variant="outlined"
@@ -234,14 +224,14 @@ const ItensPage = () => {
                             onChange={(e) => setFiltroBusca(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                             InputProps={{
-                                startAdornment: ( <InputAdornment position="start"><SearchIcon /></InputAdornment> ),
+                                startAdornment: (<InputAdornment position="start"><SearchIcon /></InputAdornment>),
                             }}
                         />
                     </Grid>
-                    <Grid size={{xs:6, sm:2}}>
+                    <Grid size={{ xs: 6, sm: 2 }}>
                         <Button variant="contained" onClick={handleSearch} fullWidth>Buscar</Button>
                     </Grid>
-                    <Grid size={{xs:6, sm:2}}>
+                    <Grid size={{ xs: 6, sm: 2 }}>
                         <Button variant="outlined" onClick={handleClearSearch} fullWidth>Limpar</Button>
                     </Grid>
                 </Grid>
@@ -302,10 +292,10 @@ const ItensPage = () => {
                 onClose={() => setIsEntradaModalOpen(false)}
                 onMovimentacaoSaved={() => {
                     setIsEntradaModalOpen(false);
-                    handleItemSaved(); // Recarrega os dados da página
+                    handleItemSaved();
                 }}
                 initialType='ENTRADA'
-                itemToRegister={itemParaEntrada} // Passa o item para ser pré-selecionado
+                itemToRegister={itemParaEntrada} 
             />
         </Stack>
     );

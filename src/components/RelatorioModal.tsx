@@ -37,7 +37,7 @@ const RelatorioModal = ({ open, onClose }: RelatorioModalProps) => {
             link.remove();
             toast.success('Relatório na fila de downloads!')
             soundService.playSuccess();
-            onClose(); // Fecha o modal após gerar o relatório
+            onClose();
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
             soundService.playError();

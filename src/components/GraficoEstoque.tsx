@@ -13,7 +13,6 @@ interface GraficoData {
     quantidadeTotal: number;
 }
 
-// O componente agora não precisa mais de props
 const GraficoEstoque = () => {
     const theme = useTheme();
     const [data, setData] = useState<GraficoData[]>([]);
@@ -40,7 +39,6 @@ const GraficoEstoque = () => {
         fetchChartData();
     }, []);
     
-    // Função para abreviar nomes longos
     const abreviarNome = (nome: string) => {
         const maxLength = 15;
         if (nome.length > maxLength) {
@@ -74,7 +72,7 @@ const GraficoEstoque = () => {
             </Typography>
             <Box sx={{ height: 'calc(100% - 40px)' }}>
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 40 }}> {/* Aumenta a margem inferior */}
+                    <BarChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 40 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         
                         <XAxis 
@@ -82,9 +80,9 @@ const GraficoEstoque = () => {
                             tick={{ fontSize: 12 }} 
                             angle={-35} 
                             textAnchor="end"
-                            height={80} // Aumenta a altura para caber o texto inclinado
+                            height={80} 
                             interval={0}
-                            tickFormatter={abreviarNome} // Aplica a função de abreviação
+                            tickFormatter={abreviarNome}
                         />
                         
                         <YAxis />
@@ -99,8 +97,7 @@ const GraficoEstoque = () => {
 };
 
 
-// Componente para o Tooltip customizado (mostra o nome completo)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (

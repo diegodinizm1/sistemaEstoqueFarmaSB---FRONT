@@ -9,13 +9,12 @@ import {
     Divider,
     Chip
 } from '@mui/material';
-// 1. Importando os tipos corretos
 import { type ItemDTO, type MedicamentoDTO } from '../types/interface';
 
 interface ItemDetailsModalProps {
     open: boolean;
     onClose: () => void;
-    item: ItemDTO | null; // 2. A prop 'item' agora aceita o tipo base 'ItemDTO'
+    item: ItemDTO | null;
 }
 
 const ItemDetailsModal = ({ open, onClose, item }: ItemDetailsModalProps) => {
@@ -40,7 +39,6 @@ const ItemDetailsModal = ({ open, onClose, item }: ItemDetailsModalProps) => {
                     <Typography variant="body1">{item.unidadeMedida || 'Não informado'}</Typography>
                 </Box>
                 
-                {/* 3. Usamos o 'dtype' para verificar se é um medicamento e exibir o campo 'tipo' */}
                 {item.dtype === 'MEDICAMENTO' && (
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="subtitle2" color="text.secondary">Tipo de Medicamento</Typography>

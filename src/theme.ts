@@ -1,7 +1,5 @@
-// Caminho: src/theme.ts
 import { type ThemeOptions } from '@mui/material/styles';
 
-// 1. Opções de tema que são compartilhadas entre os modos claro e escuro
 const sharedThemeOptions: ThemeOptions = {
     typography: {
         fontFamily: '"Poppins", sans-serif',
@@ -10,7 +8,7 @@ const sharedThemeOptions: ThemeOptions = {
         h6: { fontWeight: 600 },
     },
     shape: {
-        borderRadius: 12, // Cantos mais arredondados para um visual moderno
+        borderRadius: 12,
     },
     components: {
         MuiCssBaseline: {
@@ -20,7 +18,6 @@ const sharedThemeOptions: ThemeOptions = {
                 },
             },
         },
-        // 2. Para todos os 'Paper' (cards, modais, DataGrid, etc.)
         MuiPaper: {
             styleOverrides: {
                 root: {
@@ -29,7 +26,6 @@ const sharedThemeOptions: ThemeOptions = {
                 },
             },
         },
-        // 3. Para os botões
         MuiButton: {
             styleOverrides: {
                 root: {
@@ -43,7 +39,6 @@ const sharedThemeOptions: ThemeOptions = {
                 },
             },
         },
-        // 4. Para os ícones
         MuiSvgIcon: {
             styleOverrides: {
                 root: {
@@ -54,9 +49,7 @@ const sharedThemeOptions: ThemeOptions = {
     },
 };
 
-// 2. Função que gera o tema completo com base no modo ('light' ou 'dark')
 export const getAppTheme = (mode: 'light' | 'dark'): ThemeOptions => {
-    // Configurações específicas do tema claro
     if (mode === 'light') {
         return {
             ...sharedThemeOptions,
@@ -95,24 +88,23 @@ export const getAppTheme = (mode: 'light' | 'dark'): ThemeOptions => {
         };
     }
 
-    // Configurações específicas do tema escuro
     return {
         ...sharedThemeOptions,
         palette: {
             mode: 'dark',
             primary: {
-                main: '#90CDF4', // Azul claro para bom contraste no fundo escuro
+                main: '#90CDF4',
             },
             secondary: {
-                main: '#F6AD55', // Laranja um pouco mais claro
+                main: '#F6AD55', 
             },
             background: {
-                default: '#1A202C', // Fundo principal escuro
-                paper: '#2D3748',   // Fundo dos cards e modais um pouco mais claro
+                default: '#1A202C', 
+                paper: '#2D3748',   
             },
             text: {
-                primary: '#F7FAFC',   // Texto principal quase branco
-                secondary: '#A0AEC0', // Texto secundário acinzentado
+                primary: '#F7FAFC',   
+                secondary: '#A0AEC0',
             },
         },
         components: {

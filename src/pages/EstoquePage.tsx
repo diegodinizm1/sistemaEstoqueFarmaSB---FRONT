@@ -54,9 +54,8 @@ const EstoquePage = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [paginationModel, termoBusca]); // Dependências corretas
+    }, [paginationModel, termoBusca]);
 
-    // 2. useEffect agora chama a função memorizada
     useEffect(() => {
         fetchSaldos();
     }, [fetchSaldos]);
@@ -64,15 +63,12 @@ const EstoquePage = () => {
     useEffect(() => {
         const itemIdToScroll = location.state?.itemIdToScroll;
 
-        // Roda apenas se houver um ID e os dados já tiverem carregado
         if (itemIdToScroll && !isLoading && rows.length > 0 && apiRef.current) {
             const rowIndex = rows.findIndex(row => row.itemId === itemIdToScroll);
 
             if (rowIndex !== -1) {
-                // O comando para rolar a tabela até a linha do item
                 apiRef.current.scrollToIndexes({ rowIndex });
 
-                // Limpa o estado da navegação para não rolar de novo se o usuário der F5
                 window.history.replaceState({}, document.title);
             }
         }

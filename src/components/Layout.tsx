@@ -21,12 +21,11 @@ import {
     SpeedDialAction
 } from '@mui/material';
 import toast from 'react-hot-toast';
-import { useThemeMode } from '../context/ThemeContext'; // Importe o hook do tema
-import Brightness4Icon from '@mui/icons-material/Brightness4'; // Ícone de lua
+import { useThemeMode } from '../context/ThemeContext';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
 
-// --- ÍCONES ---
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -40,7 +39,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
-// --- MODAIS E CONTEXTO ---
 import PerfilModal from './PerfilModal';
 import MovimentacaoFormModal from './MovimentacaoFormModal';
 import ItemFormModal from './AddItemModal';
@@ -113,7 +111,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Layout = ({ children }: { children: ReactNode }) => {
     const { mode, toggleTheme } = useThemeMode();
-    const theme = useTheme(); // Hook do tema que estava faltando
+    const theme = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
     const [open, setOpen] = useState(false);
@@ -128,7 +126,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
     const fabRef = useRef<HTMLDivElement>(null);
     const appBarRef = useRef<HTMLElement>(null);
     const [appBarHeight, setAppBarHeight] = useState(0);
-    // 2. Novo estado para guardar o tamanho do botão
     const [fabSize, setFabSize] = useState({ width: 0, height: 0 });
     const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
@@ -143,7 +140,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         return () => window.removeEventListener('resize', updateDimensions);
     }, []);
 
-    // 3. useMemo agora depende do 'windowSize' e recalcula os limites corretamente
     const draggableBounds = useMemo(() => {
         if (!fabSize.width || !fabSize.height) return undefined;
 
@@ -184,21 +180,16 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
     const handleFabDoubleClick = () => {
         setFabPosition({ x: 0, y: 0 });
-        setFabDirection('up'); // Reseta a direção para o padrão
+        setFabDirection('up');
     };
 
     const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
-        // Atualiza a posição no estado
         setFabPosition({ x: data.x, y: data.y });
 
-        // Calcula a nova direção
-        // 'data.node' é o elemento DOM do nosso Box arrastável
         const node = data.node;
         const screenHeight = window.innerHeight;
         const finalY = node.offsetTop + data.y;
 
-        // Se o botão estiver na metade de cima da tela, abre para baixo.
-        // Senão, abre para cima.
         if (finalY < screenHeight / 2) {
             setFabDirection('down');
         } else {
@@ -222,7 +213,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
                         sx={{
                             flexGrow: 1,
                             fontWeight: 'bold',
-                            cursor: 'pointer' // Adicionado para mostrar que é clicável
+                            cursor: 'pointer'
                         }}
                     >
                         EstoqueFarma
@@ -303,13 +294,13 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 nodeRef={fabRef}
                 position={fabPosition}
                 onStop={handleDragStop}
-                bounds={draggableBounds} // 5. Usando os limites calculados
+                bounds={draggableBounds}
             >
                 <Box
                     ref={fabRef}
                     onDoubleClick={handleFabDoubleClick}
                     sx={{
-                        position: 'fixed', // Voltamos a usar 'fixed'
+                        position: 'fixed',
                         bottom: 32,
                         right: 32,
                         zIndex: theme.zIndex.speedDial,
@@ -335,7 +326,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 </Box>
             </Draggable>
 
-            {/* Modais Globais */}
             <PerfilModal open={isPerfilModalOpen} onClose={() => setIsPerfilModalOpen(false)} />
             <ItemFormModal open={isItemModalOpen} onClose={() => setIsItemModalOpen(false)} onItemSaved={handleSave} itemType="medicamento" itemToEdit={null} />
             <MovimentacaoFormModal open={isEntradaModalOpen} onClose={() => setIsEntradaModalOpen(false)} onMovimentacaoSaved={handleSave} initialType="ENTRADA" />

@@ -29,7 +29,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     const handleLogin = async (event: React.FormEvent) => {
-        event.preventDefault(); // Impede o recarregamento da página ao submeter o formulário
+        event.preventDefault();
         setIsLoading(true);
         try {
             const response = await axios.post(`${API_BASE_URL}/auth/login`, { login, senha });
@@ -56,7 +56,6 @@ const LoginPage = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 minHeight: '100vh',
-                // Usa a cor de fundo do tema global
                 backgroundColor: 'background.default', 
                 p: 3,
             }}
@@ -64,7 +63,7 @@ const LoginPage = () => {
             <Paper
                 elevation={6}
                 sx={{
-                    p: { xs: 3, sm: 4 }, // Padding responsivo
+                    p: { xs: 3, sm: 4 },
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -90,7 +89,7 @@ const LoginPage = () => {
                         variant="outlined"
                         fullWidth
                         margin="normal"
-                        required // Adicionado para validação básica
+                        required
                         value={login}
                         onChange={(e) => setLogin(e.target.value)}
                         InputProps={{
@@ -130,7 +129,7 @@ const LoginPage = () => {
                         }}
                     />
                     <Button
-                        type="submit" // Permite submeter o formulário com a tecla Enter
+                        type="submit" 
                         variant="contained"
                         fullWidth
                         size="large"

@@ -27,7 +27,7 @@ const ConsumoSetorChart = () => {
             try {
                 const response = await axios.get<ConsumoData[]>(`${API_BASE_URL}/dashboard/consumo-setor`, {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { periodo } // Passa o período selecionado para a API
+                    params: { periodo }
                 });
                 setData(response.data || []);
             } catch (err) {
@@ -38,7 +38,7 @@ const ConsumoSetorChart = () => {
             }
         };
         fetchChartData();
-    }, [periodo]); // Re-executa a busca sempre que o 'periodo' mudar
+    }, [periodo]);
 
     const handlePeriodoChange = (_event: React.MouseEvent<HTMLElement>, newPeriodo: 'DIA' | 'MES' | 'ANO' | null) => {
         if (newPeriodo !== null) {

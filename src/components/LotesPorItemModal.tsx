@@ -12,8 +12,8 @@ const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 interface LotesPorItemModalProps {
     open: boolean;
     onClose: () => void;
-    itemSaldo: EstoqueSaldoDTO | null; // Recebe o item mestre para exibir o nome
-    onLotesUpdated: () => void; // Callback para atualizar a tela principal
+    itemSaldo: EstoqueSaldoDTO | null;
+    onLotesUpdated: () => void;
 }
 
 const LotesPorItemModal = ({ open, onClose, itemSaldo, onLotesUpdated }: LotesPorItemModalProps) => {
@@ -35,8 +35,8 @@ const LotesPorItemModal = ({ open, onClose, itemSaldo, onLotesUpdated }: LotesPo
     useEffect(fetchLotes, [open, itemSaldo]);
 
     const handleAjusteSaved = () => {
-        fetchLotes(); // Recarrega a lista de lotes
-        onLotesUpdated(); // Avisa a página principal para recarregar os saldos
+        fetchLotes();
+        onLotesUpdated();
     };
 
     const columns: GridColDef<EstoqueListaDTO>[] = [

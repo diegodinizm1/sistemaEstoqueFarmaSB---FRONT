@@ -101,8 +101,8 @@ const MovimentacoesPage = () => {
                         width: '100%',
                         height: '100%',
                         display: 'flex',
-                        justifyContent: 'center', // Centraliza horizontalmente
-                        alignItems: 'center',    // Centraliza verticalmente
+                        justifyContent: 'center',
+                        alignItems: 'center',
                     }}
                 >
                     <Typography variant="body2">{params.value}</Typography>

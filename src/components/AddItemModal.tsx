@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import ScienceIcon from '@mui/icons-material/Science';
-import toast from 'react-hot-toast'; // 1. Importando o toast
+import toast from 'react-hot-toast';
 
 import { type ItemDTO, type MedicamentoDTO } from '../types/interface';
 import { soundService } from '../services/soundService';
@@ -73,7 +73,6 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
         const { name, value } = event.target as HTMLInputElement;
-        // Garante que o estoque mínimo seja tratado como número
         const finalValue = name === 'estoqueMinimo' ? (value === '' ? '' : Number(value)) : value;
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
@@ -93,8 +92,7 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
         const promise = isEditMode
             ? axios.put(`${API_BASE_URL}${endpoint}/${itemToEdit?.id}`, payload, { headers: { Authorization: `Bearer ${token}` } })
             : axios.post(`${API_BASE_URL}${endpoint}`, payload, { headers: { Authorization: `Bearer ${token}` } });
-        
-        // Usando toast.promise para gerenciar o feedback
+
         toast.promise(promise, {
             loading: 'Salvando item...',
             success: 'Item salvo com sucesso!',
@@ -141,7 +139,6 @@ const ItemFormModal = ({ open, onClose, onItemSaved, itemType, itemToEdit }: Ite
                         <TextField name="descricaoDetalhada" label="Descrição Detalhada" multiline rows={3} required value={formData.descricaoDetalhada} onChange={handleChange} />
                         <TextField name="unidadeMedida" label="Unidade de Medida" required value={formData.unidadeMedida} onChange={handleChange} />
                         
-                        {/* NOVO CAMPO ADICIONADO */}
                         <TextField 
                             name="estoqueMinimo" 
                             label="Estoque Mínimo" 

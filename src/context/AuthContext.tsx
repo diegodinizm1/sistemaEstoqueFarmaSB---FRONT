@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             } catch (error) {
                 console.error("Falha ao buscar usuário", error);
                 setUser(null);
-                localStorage.removeItem('token'); // Limpa token inválido
+                localStorage.removeItem('token');
             }
         }
         setIsLoading(false);
@@ -52,7 +52,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-// Hook customizado para facilitar o uso do contexto
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);

@@ -4,7 +4,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, B
 interface ConfirmPasswordModalProps {
     open: boolean;
     onClose: () => void;
-    onConfirm: (password: string) => void; // Callback que retorna a senha digitada
+    onConfirm: (password: string) => void;
     isLoading: boolean;
 }
 

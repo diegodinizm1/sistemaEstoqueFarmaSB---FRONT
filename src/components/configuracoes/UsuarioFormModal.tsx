@@ -36,7 +36,7 @@ const UsuarioFormModal = ({ open, onClose, onSave }: UsuarioFormModalProps) => {
 
     const handleSave = () => {
         if (formData.senha !== confirmarSenha) {
-            alert("As senhas não coincidem."); // Pode ser um toast
+            alert("As senhas não coincidem.");
             return;
         }
         onSave(formData);

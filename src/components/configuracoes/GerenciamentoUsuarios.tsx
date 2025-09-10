@@ -19,7 +19,6 @@ const GerenciamentoUsuarios = () => {
     const [usuarios, setUsuarios] = useState<FuncionarioListaDTO[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Estados para os modais de criação
     const [isUserFormModalOpen, setIsUserFormModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [newUserFormData, setNewUserFormData] = useState<NewUserFormData | null>(null);
@@ -40,21 +39,17 @@ const GerenciamentoUsuarios = () => {
 
     useEffect(() => { fetchUsuarios(); }, []);
 
-    // Abre o primeiro modal (formulário)
     const handleOpenAddModal = () => { setIsUserFormModalOpen(true); };
 
-    // Chamado pelo primeiro modal ao clicar em "Próximo"
     const handlePrepareNewUser = (formData: NewUserFormData) => {
         setNewUserFormData(formData);
         setIsUserFormModalOpen(false);
         setIsConfirmModalOpen(true);
     };
 
-    // Chamado pelo segundo modal ao confirmar a senha
     const handleConfirmCreateUser = async (adminPassword: string) => {
         if (!newUserFormData) return;
 
-        // Usamos um toast.promise para gerenciar todos os estados da requisição
         const promise = axios.post(`${API_BASE_URL}/funcionarios`, {
             ...newUserFormData,
             senhaAdminConfirmacao: adminPassword,
@@ -73,7 +68,6 @@ const GerenciamentoUsuarios = () => {
             });
     };
 
-    // Coluna de ações foi removida
     const columns: GridColDef<FuncionarioListaDTO>[] = [
         { field: 'nome', headerName: 'Nome', flex: 1.5 },
         { field: 'login', headerName: 'Login', flex: 1 },
@@ -116,7 +110,7 @@ const GerenciamentoUsuarios = () => {
                 open={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={handleConfirmCreateUser}
-                isLoading={isLoading} // Passando isLoading para desabilitar botão
+                isLoading={isLoading}
             />
         </Stack>
     );
