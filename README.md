@@ -45,7 +45,7 @@ Este é o projeto frontend para o Sistema de Gestão de Farmácia. É uma Single
 ### Pré-requisitos
 -   Node.js v18 ou superior.
 -   NPM ou Yarn.
--   Uma instância do **[Backend do Sistema de Farmácia](https://github.com/seu-usuario/sistema-farmacia-backend)** deve estar rodando e acessível.
+-   Uma instância do **[Backend do Sistema de Farmácia](https://github.com/diegodinizm1/sistemaEstoqueFarmaSB)** deve estar rodando e acessível.
 
 ### Configuração do Ambiente
 1.  **Clone o repositório:**
@@ -84,4 +84,5 @@ A aplicação estará disponível em `http://localhost:5173` (ou outra porta ind
 
 ---
 _Este projeto foi desenvolvido para o hospital da minha cidade, demonstrando competências em tecnologias frontend modernas e experiência com o cliente._
+
 
