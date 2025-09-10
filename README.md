@@ -7,7 +7,7 @@
 
 Este é o projeto frontend para o Sistema de Gestão de Farmácia. É uma Single-Page Application (SPA) construída com React e TypeScript, projetada para consumir a API RESTful do backend e fornecer uma interface de usuário rica, reativa e intuitiva para os funcionários da farmácia.
 
-## ✨ Features Principais
+##  Features Principais
 
 -   **Interface Responsiva:** Construída com Material-UI, a aplicação se adapta a diferentes tamanhos de tela.
 -   **Autenticação Segura:** Fluxo de login completo com armazenamento de token JWT e rotas protegidas.
@@ -18,7 +18,7 @@ Este é o projeto frontend para o Sistema de Gestão de Farmácia. É uma Single
 -   **Geração de Relatórios:** Funcionalidade para solicitar e baixar relatórios em PDF gerados pelo backend.
 -   **Feedback ao Usuário:** Notificações (toasts) e alertas sonoros para confirmar ações de sucesso ou informar sobre erros.
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 #### **Core**
 * **React 18:** Biblioteca para construção da interface de usuário.
@@ -40,7 +40,7 @@ Este é o projeto frontend para o Sistema de Gestão de Farmácia. É uma Single
 * **Day.js:** Para manipulação e formatação de datas.
 * **React Hot Toast:** Para exibir notificações (toasts) de forma simples e elegante.
 
-## 🚀 Como Executar o Projeto
+##  Como Executar o Projeto
 
 ### Pré-requisitos
 -   Node.js v18 ou superior.
@@ -84,3 +84,4 @@ A aplicação estará disponível em `http://localhost:5173` (ou outra porta ind
 
 ---
 _Este projeto foi desenvolvido para o hospital da minha cidade, demonstrando competências em tecnologias frontend modernas e experiência com o cliente._
+
